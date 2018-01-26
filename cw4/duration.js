@@ -1,46 +1,43 @@
-const dictionary = [['years', 31536000], ['days', 86400], ['hours', 3600], ['minutes', 60]];
 
 
 function formatDuration(seconds) {
+
+  if (seconds === 0) return 'now';
+  
+  const dictionary = [['years', 31536000], ['days', 86400], ['hours', 3600], ['minutes', 60]];
   let result = []; 
-  let secondsRemaining = seconds; 
+  let total = seconds; 
 
   while (dictionary.length > 0) {
-    const x = Math.floor(secondsRemaining / dictionary[0][1]);
-    const remainder = secondsRemaining % dictionary[0][1];
-    console.log({ x, remainder });
+    const x = Math.floor(total / dictionary[0][1]);
+    const remainder = total % dictionary[0][1];
     if (x >= 1) {
       result.push(formatLabel(x, dictionary[0][0]));
-      let secondsRemaining = remainder;
-      console.log({secondsRemaining})
+      total = remainder;
     }
-    // console.log(dictionary);
     dictionary.shift();
   }
 
-  result.push(formatLabel(secondsRemaining, 'seconds'));
+  let label = formatLabel(total, 'seconds');
+  if (label) {
+    result.push(label);
+  }
+  
+  let str = result.join(', ');
+  let finalComma = str.lastIndexOf(',');
 
-  
-  
-  return result;
+  if (finalComma > -1) {
+    str = `${str.slice(0, finalComma)} and${str.slice(finalComma + 1)}`;
+  }
+  return str;
 }
 
 function formatLabel(num, timescale) {
   if (num === 0) return '';
-  else if (num === 1) return num + ' ' + timescale.slice(0, timescale.length -1);
-  else return num + ' ' + timescale;
+  else if (num === 1) return `${num} ${timescale.slice(0, timescale.length -1)}`;
+  else return `${num} ${timescale}`;
 }
 
-// console.log(formatLabel(0, 'minutes'));
+formatDuration(120);
 
-const res = formatDuration(90);
 
-console.log(res);
-
-// Test.assertEquals(formatDuration(1), "1 second");
-// Test.assertEquals(formatDuration(62), "1 minute and 2 seconds");
-// Test.assertEquals(formatDuration(120), "2 minutes");
-// Test.assertEquals(formatDuration(3600), "1 hour");
-// Test.assertEquals(formatDuration(3662), "1 hour, 1 minute and 2 seconds");
-// 1 day - 86400
-// year 31536000
